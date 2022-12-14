@@ -11,14 +11,14 @@ exports._GET_ACTIVITIES = async (data) => {
 };
 exports._GET_ACTIVITY = async (data) => {
   try {
-    const activity = await Activity.findAll({
+    const activity = await Activity.findOne({
       where: {
         id: data.id,
       },
     });
-    if (!activity[0])
+    if (!activity)
       return [status.NOT_FOUND, null, `Activity with ID ${data.id} Not Found`];
-    return [status.OK, activity[0], "Success"];
+    return [status.OK, activity, "Success"];
   } catch (error) {
     return handleError(error);
   }
@@ -34,16 +34,14 @@ exports._CREATE_ACTIVITY = async (data) => {
 };
 exports._UPDATE_ACTIVITY = async (data) => {
   try {
-    // var res = await this._GET_ACTIVITY(data);
-    // if (res[0] !== status.OK) return res;
-    var result = await Activity.update(data, {
+    var count = await Activity.update(data, {
       where: {
         id: data.id,
       },
     });
-    if (!result)
+    if (count === 0)
       return [status.NOT_FOUND, null, `Activity with ID ${data.id} Not Found`];
-    return [status.OK, result, "Success"];
+    return await this._GET_ACTIVITY(data);
   } catch (error) {
     return handleError(error);
   }

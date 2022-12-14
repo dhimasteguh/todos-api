@@ -17,14 +17,14 @@ exports._GET_TODOS = async (data) => {
 };
 exports._GET_TODO = async (data) => {
   try {
-    const todo = await Todo.findAll({
+    const todo = await Todo.findOne({
       where: {
         id: data.id,
       },
     });
-    if (!todo[0])
+    if (!todo)
       return [status.NOT_FOUND, null, `Todo with ID ${data.id} Not Found`];
-    return [status.OK, todo[0], "Success"];
+    return [status.OK, todo, "Success"];
   } catch (error) {
     return handleError(error);
   }
@@ -43,16 +43,14 @@ exports._CREATE_TODO = async (data) => {
 };
 exports._UPDATE_TODO = async (data) => {
   try {
-    // var res = await this._GET_TODO(data);
-    // if (res[0] !== status.OK) return res;
-    var result = await Todo.update(data, {
+    var count = await Todo.update(data, {
       where: {
         id: data.id,
       },
     });
-    if (!result)
+    if (count === 0)
       return [status.NOT_FOUND, null, `Todo with ID ${data.id} Not Found`];
-    return [status.OK, result, "Success"];
+    return await this._GET_TODO(data);
   } catch (error) {
     return handleError(error);
   }
