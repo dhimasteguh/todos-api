@@ -43,7 +43,7 @@ exports._UPDATE_ACTIVITY = async (data) => {
     });
     return this._GET_ACTIVITY(data);
   } catch (error) {
-    return handleError(error);
+    return handleError(`Activity with ID ${data.id} Not Found`);
   }
 };
 exports._DELETE_ACTIVITY = async (data) => {
@@ -57,11 +57,11 @@ exports._DELETE_ACTIVITY = async (data) => {
     });
     return [status.OK, {}, "Success"];
   } catch (error) {
-    return handleError(error);
+    return handleError(`Activity with ID ${data.id} Not Found`);
   }
 };
 const handleError = (error) => {
   console.error(error);
   const message = typeof error == "string" ? error : "Something wrong";
-  return [status.BAD_REQUEST, null, message];
+  return [status.NOT_FOUND, null, message];
 };
