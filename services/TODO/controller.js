@@ -2,7 +2,7 @@ const { Todo } = require("./model");
 const { Activity } = require("../ACTIVITY/model");
 const { _GET_ACTIVITY } = require("../ACTIVITY/controller");
 const status = require("http-status");
-
+const Redis = require("../../library/redis");
 exports._GET_TODOS = async (data) => {
   try {
     const todos = await Todo.findAll({
@@ -50,6 +50,8 @@ exports._UPDATE_TODO = async (data) => {
         id: data.id,
       },
     });
+    if (res[1]["activity_group_id"] !== data["activity_group_id"])
+      Redis.del(`todo-items?${res[1]["activity_group_id"]}`);
     return this._GET_TODO(data);
   } catch (error) {
     return handleError(error);
@@ -64,6 +66,7 @@ exports._DELETE_TODO = async (data) => {
         id: data.id,
       },
     });
+    Redis.del(`todo-items?${res[1].activityGroupId}`);
     return [status.OK, {}, "Success"];
   } catch (error) {
     return handleError(error);

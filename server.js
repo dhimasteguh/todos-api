@@ -6,6 +6,7 @@ const express = require("express"),
   server = require("http").createServer(app),
   port = serverSettings.port || 3030,
   bodyParser = require("body-parser");
+const redis = require("redis");
 
 sequelize
   .authenticate()
@@ -16,8 +17,11 @@ sequelize
     console.error("Unable to connect to the database: ", error);
     throw error;
   });
+
 const todoAPI = require("./services/TODO/todo");
 const activityAPI = require("./services/ACTIVITY/activity");
+sequelize.sync({ force: true });
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.raw({ extended: true }));
@@ -36,7 +40,6 @@ app.use(function (req, res, next) {
 });
 activityAPI(app);
 todoAPI(app);
-sequelize.sync({ force: true });
 
 server.listen(port, function () {
   console.info("Server listening at port %d", port);

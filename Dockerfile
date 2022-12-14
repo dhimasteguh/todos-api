@@ -10,10 +10,13 @@ RUN ncc build server.js -o dist
 FROM node:14-alpine
 ENV HOME=/home/node
 WORKDIR $HOME/app
+RUN apk add --no-cache redis
 COPY --from=builder /app/dist/index.js .
 RUN npm install mysql2
 # COPY --from=builder /app .
-# COPY .env $HOME/app/
+
 USER node
 EXPOSE 3030
-CMD ["node", "index.js"]
+EXPOSE 6379
+# CMD ["node index.js & redis-server"]
+CMD redis-server & node index.js
