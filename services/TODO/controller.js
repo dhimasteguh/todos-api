@@ -45,34 +45,37 @@ exports._UPDATE_TODO = async (data) => {
   try {
     // var res = await this._GET_TODO(data);
     // if (res[0] !== status.OK) return res;
-    await Todo.update(data, {
+    var result = await Todo.update(data, {
       where: {
         id: data.id,
       },
     });
-
-    return this._GET_TODO(data);
+    if (!result)
+      return [status.NOT_FOUND, null, `Todo with ID ${data.id} Not Found`];
+    return [status.OK, result, "Success"];
   } catch (error) {
-    return handleError(`Todo with ID ${data.id} Not Found`);
+    return handleError(error);
   }
 };
 exports._DELETE_TODO = async (data) => {
   try {
-    // var res = await this._GET_TODO(data);
-    // if (res[0] !== status.OK) return res;
-    await Todo.destroy({
+    var res = await this._GET_TODO(data);
+    if (res[0] !== status.OK) return res;
+    var count = await Todo.destroy({
       where: {
         id: data.id,
       },
     });
+    if (count === 0)
+      return [status.NOT_FOUND, null, `Todo with ID ${data.id} Not Found`];
     Redis.del(`todo-items?${res[1].activityGroupId}`);
     return [status.OK, {}, "Success"];
   } catch (error) {
-    return handleError(`Todo with ID ${data.id} Not Found`);
+    return handleError(error);
   }
 };
 const handleError = (error) => {
   console.error(error);
   const message = typeof error == "string" ? error : "Something wrong";
-  return [status.NOT_FOUND, null, message];
+  return [status.BAD_REQUEST, null, message];
 };

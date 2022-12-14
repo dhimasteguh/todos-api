@@ -36,32 +36,36 @@ exports._UPDATE_ACTIVITY = async (data) => {
   try {
     // var res = await this._GET_ACTIVITY(data);
     // if (res[0] !== status.OK) return res;
-    await Activity.update(data, {
+    var result = await Activity.update(data, {
       where: {
         id: data.id,
       },
     });
-    return this._GET_ACTIVITY(data);
+    if (!result)
+      return [status.NOT_FOUND, null, `Activity with ID ${data.id} Not Found`];
+    return [status.OK, result, "Success"];
   } catch (error) {
-    return handleError(`Activity with ID ${data.id} Not Found`);
+    return handleError(error);
   }
 };
 exports._DELETE_ACTIVITY = async (data) => {
   try {
     // var res = await this._GET_ACTIVITY(data);
     // if (res[0] !== status.OK) return res;
-    await Activity.destroy({
+    var count = await Activity.destroy({
       where: {
         id: data.id,
       },
     });
+    if (count === 0)
+      return [status.NOT_FOUND, null, `Activity with ID ${data.id} Not Found`];
     return [status.OK, {}, "Success"];
   } catch (error) {
-    return handleError(`Activity with ID ${data.id} Not Found`);
+    return handleError(error);
   }
 };
 const handleError = (error) => {
   console.error(error);
   const message = typeof error == "string" ? error : "Something wrong";
-  return [status.NOT_FOUND, null, message];
+  return [status.BAD_REQUEST, null, message];
 };
