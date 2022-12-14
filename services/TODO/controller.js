@@ -50,8 +50,7 @@ exports._UPDATE_TODO = async (data) => {
         id: data.id,
       },
     });
-    if (res[1]["activity_group_id"] !== data["activity_group_id"])
-      Redis.del(`todo-items?${res[1]["activity_group_id"]}`);
+
     return this._GET_TODO(data);
   } catch (error) {
     return handleError(error);
