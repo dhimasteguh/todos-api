@@ -20,7 +20,7 @@ sequelize
 
 const todoAPI = require("./services/TODO/todo");
 const activityAPI = require("./services/ACTIVITY/activity");
-sequelize.sync({ force: true });
+// sequelize.sync({ force: true });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -41,6 +41,40 @@ app.use(function (req, res, next) {
 activityAPI(app);
 todoAPI(app);
 
-server.listen(port, function () {
-  console.info("Server listening at port %d", port);
-});
+var cluster = require("cluster");
+
+if (cluster.isMaster) {
+  sequelize.sync({ force: true });
+  var numWorkers = require("os").cpus().length;
+
+  console.log("Master cluster setting up " + numWorkers + " workers...");
+
+  for (var i = 0; i < numWorkers; i++) {
+    cluster.fork();
+  }
+
+  cluster.on("online", function (worker) {
+    console.log("Worker " + worker.process.pid + " is online");
+  });
+
+  cluster.on("exit", function (worker, code, signal) {
+    console.log(
+      "Worker " +
+        worker.process.pid +
+        " died with code: " +
+        code +
+        ", and signal: " +
+        signal
+    );
+    console.log("Starting a new worker");
+    cluster.fork();
+  });
+} else {
+  server.listen(port, function () {
+    console.info("Server listening at port %d", port);
+  });
+}
+
+// server.listen(port, function () {
+//   console.info("Server listening at port %d", port);
+// });
