@@ -7,6 +7,7 @@ const sequelize = new Sequelize(
   {
     host: dbSettings.host,
     dialect: "mysql",
+    logging: false,
   }
 );
 module.exports = Object.assign({}, { sequelize });

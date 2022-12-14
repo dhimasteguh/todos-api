@@ -11,11 +11,11 @@ redisClient.on("connect", () => console.error(`Redis Ready`));
 redisClient.connect();
 async function get(key) {
   const data = await redisClient.get(key);
-  console.log("Success get cache", key, data);
+  // console.log("Success get cache", key, data);
   return data;
 }
 function set(key, value) {
-  console.log("Success set cache", key, value);
+  // console.log("Success set cache", key, value);
   redisClient.setEx(key, 60, value);
 }
 function del(key) {
