@@ -34,8 +34,8 @@ exports._CREATE_ACTIVITY = async (data) => {
 };
 exports._UPDATE_ACTIVITY = async (data) => {
   try {
-    var res = await this._GET_ACTIVITY(data);
-    if (res[0] !== status.OK) return res;
+    // var res = await this._GET_ACTIVITY(data);
+    // if (res[0] !== status.OK) return res;
     await Activity.update(data, {
       where: {
         id: data.id,
@@ -48,8 +48,8 @@ exports._UPDATE_ACTIVITY = async (data) => {
 };
 exports._DELETE_ACTIVITY = async (data) => {
   try {
-    var res = await this._GET_ACTIVITY(data);
-    if (res[0] !== status.OK) return res;
+    // var res = await this._GET_ACTIVITY(data);
+    // if (res[0] !== status.OK) return res;
     await Activity.destroy({
       where: {
         id: data.id,

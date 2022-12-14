@@ -33,8 +33,8 @@ exports._CREATE_TODO = async (data) => {
   try {
     if (!data.title) throw "title cannot be null";
     if (!data.activity_group_id) throw "activity_group_id cannot be null";
-    var res = await _GET_ACTIVITY({ id: data.activity_group_id });
-    if (res[0] !== status.OK) return res;
+    // var res = await _GET_ACTIVITY({ id: data.activity_group_id });
+    // if (res[0] !== status.OK) return res;
     const todo = await Todo.create(data);
     return [status.CREATED, todo, "Success"];
   } catch (error) {
@@ -43,8 +43,8 @@ exports._CREATE_TODO = async (data) => {
 };
 exports._UPDATE_TODO = async (data) => {
   try {
-    var res = await this._GET_TODO(data);
-    if (res[0] !== status.OK) return res;
+    // var res = await this._GET_TODO(data);
+    // if (res[0] !== status.OK) return res;
     await Todo.update(data, {
       where: {
         id: data.id,
@@ -59,7 +59,7 @@ exports._UPDATE_TODO = async (data) => {
 };
 exports._DELETE_TODO = async (data) => {
   try {
-    var res = await this._GET_TODO(data);
+    // var res = await this._GET_TODO(data);
     if (res[0] !== status.OK) return res;
     await Todo.destroy({
       where: {
