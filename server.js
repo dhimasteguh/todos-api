@@ -74,6 +74,7 @@ if (cluster.isMaster) {
     console.info("Server listening at port %d", port);
   });
 }
+module.exports = app;
 
 // server.listen(port, function () {
 //   console.info("Server listening at port %d", port);
